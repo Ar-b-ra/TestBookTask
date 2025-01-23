@@ -36,4 +36,4 @@ class BookWorker(BookWorkerBase):
         self._books[book_id] = book_to_update
 
     def delete_book(self, book_id: int) -> Book | None:
-        return self._books.pop(book_id, default=None)
+        return self._books.pop(book_id, None)
