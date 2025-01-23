@@ -37,11 +37,47 @@ def test_get_all_books(book_worker, sample_book):
     assert books[0].title == "Sample Book"
 
 
-def test_get_all_books_by_genre(book_worker, sample_book):
-    book_worker.create_book(sample_book)
-    books = book_worker.get_all_books(genre="Fiction", author=None)
-    assert len(books) == 1
-    assert books[0].genre == "Fiction"
+@pytest.mark.parametrize(
+    "filter_params, expected_titles",
+    [
+        ({"genre": "Dystopian"}, ["1984", "Brave New World"]),
+        ({"author": "George Orwell"}, ["1984", "Animal Farm"]),
+        ({"genre": "Dystopian", "author": "George Orwell"}, ["1984"]),
+        ({}, ["1984", "Animal Farm", "Brave New World", "The Great Gatsby"]),
+    ],
+)
+def test_get_books_with_filter(book_worker, filter_params, expected_titles):
+    test_books = [
+        {
+            "title": "1984",
+            "author": "George Orwell",
+            "year": 1949,
+            "genre": "Dystopian",
+        },
+        {
+            "title": "Animal Farm",
+            "author": "George Orwell",
+            "year": 1945,
+            "genre": "Satire",
+        },
+        {
+            "title": "Brave New World",
+            "author": "Aldous Huxley",
+            "year": 1932,
+            "genre": "Dystopian",
+        },
+        {
+            "title": "The Great Gatsby",
+            "author": "F. Scott Fitzgerald",
+            "year": 1925,
+            "genre": "Fiction",
+        },
+    ]
+    for book in test_books:
+        book_worker.create_book(Book(**book))
+    books = book_worker.get_all_books(**filter_params)
+    returned_titles = [book.title for book in books]
+    assert returned_titles == expected_titles
 
 
 def test_get_all_books_by_author(book_worker, sample_book):

@@ -4,20 +4,33 @@ from schemas.book import Book
 
 class BookWorker(BookWorkerBase):
     def __init__(self):
-        self._books = {}
+        self._books: dict[int, Book] = {}
 
     def get_book(self, book_id: int) -> Book | None:
         return self._books.get(book_id)
 
-    def get_all_books(self, genre: str | None, author: str | None) -> list[Book]:
+    def get_all_books(
+        self, genre: str | None = None, author: str | None = None
+    ) -> list[Book]:
         filtered_books = []
         genre_lower = genre.lower() if genre else None
         author_lower = author.lower() if author else None
 
-        for book in self._books.values():
-            if genre_lower is not None and book.genre.lower() != genre_lower:
+        for _, book in self._books.items():
+            book_genre = book.genre
+            book_author = book.author
+
+            if (
+                book_genre is not None
+                and genre_lower is not None
+                and book_genre.lower() != genre_lower
+            ):
                 continue
-            if author_lower is not None and book.author.lower() != author_lower:
+            if (
+                book_author is not None
+                and author_lower is not None
+                and book.author.lower() != author_lower
+            ):
                 continue
             filtered_books.append(book)
 
