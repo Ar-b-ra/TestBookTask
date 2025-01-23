@@ -13,3 +13,8 @@ class Book(BaseModel):
         ge=1000, le=datetime.now().year, description="The year of publication"
     )
     genre: str = Field(min_length=1, max_length=50, description="The genre of the book")
+
+
+class BookCreate(BaseModel):
+    id: int
+    book: Book
