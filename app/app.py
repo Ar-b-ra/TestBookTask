@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException, status
+from fastapi.params import Query
 
 from schemas.book import Book, BookCreate
 from worker.book_worker import BookWorker
@@ -22,8 +23,11 @@ async def create_book(book: Book):
 
 # Эндпоинт для получения списка всех книг
 @app.get("/books/", response_model=list[Book], description="Get all books")
-async def get_books():
-    return _book_worker.get_all_books()
+async def get_books(
+    genre: str | None = Query(None, description="Filter books by genre"),
+    author: str | None = Query(None, description="Filter books by author"),
+):
+    return _book_worker.get_all_books(genre, author)
 
 
 @app.get(
