@@ -16,8 +16,8 @@ _book_worker = BookWorker()
     description="Create new book",
 )
 async def create_book(book: Book):
-    new_id, book = BookWorker.create_book(book)
-    return BookCreate(new_id, book)
+    new_id, book = _book_worker.create_book(book)
+    return {"id": new_id, "book": book}
 
 
 # Эндпоинт для получения списка всех книг
